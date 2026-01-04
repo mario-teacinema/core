@@ -8,3 +8,6 @@ node_modules/
 .idea/
 .DS_Store
 Thumbs.db
+.pnp.cj
+.pnp.loader.mjs
+.yarn/
