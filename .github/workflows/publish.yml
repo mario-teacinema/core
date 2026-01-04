@@ -1,18 +1,35 @@
-name: Publish
+name: Publish to NPM
+
 on:
   push:
     branches:
       - main
 jobs:
   publish:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write
+      id-token: write  # <--- КРИТИЧНО ВАЖНО для Trusted Publishing
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '22' # Используем актуальную версию
           registry-url: 'https://registry.npmjs.org'
-      - run: npm publish --provenance --access public
+
+      - name: Publish
+        # Флаг --provenance обязателен для Trusted Publishing
+        run: npm publish --provenance --access public
+        env:
+          # При OIDC (Trusted Publishing) setup-node автоматически подхватит
+          # временный токен, но NODE_AUTH_TOKEN часто все равно требуется указывать
+          # как переменную среды для корректной подстановки.
+          # В случае Trusted Publisher, NPM сам обменяет OIDC токен.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          # Примечание: Если ты полностью перешел на OIDC без токенов,
+          # убедись, что npm publish не падает. Обычно setup-node требует
+          # registry-url, чтобы настроить .npmrc
