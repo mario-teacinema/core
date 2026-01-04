@@ -4,12 +4,13 @@ on:
   push:
     branches:
       - main
+
 jobs:
   publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write  # <--- КРИТИЧНО ВАЖНО для Trusted Publishing
+      id-token: write # Обязательно для OIDC
 
     steps:
       - name: Checkout
@@ -18,18 +19,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Используем актуальную версию
-          registry-url: 'https://registry.npmjs.org'
+          node-version: '22'
+          # УБИРАЕМ registry-url.
+          # Это предотвратит создание сломанного .npmrc файла.
 
       - name: Publish
-        # Флаг --provenance обязателен для Trusted Publishing
+        # Убрали env с токеном. OIDC сработает автоматически благодаря --provenance
+        # Если используешь Yarn Berry (v2+), лучше публиковать через yarn npm publish
         run: npm publish --provenance --access public
-        env:
-          # При OIDC (Trusted Publishing) setup-node автоматически подхватит
-          # временный токен, но NODE_AUTH_TOKEN часто все равно требуется указывать
-          # как переменную среды для корректной подстановки.
-          # В случае Trusted Publisher, NPM сам обменяет OIDC токен.
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          # Примечание: Если ты полностью перешел на OIDC без токенов,
-          # убедись, что npm publish не падает. Обычно setup-node требует
-          # registry-url, чтобы настроить .npmrc
