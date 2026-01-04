@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # Обязательно для OIDC
+      id-token: write
 
     steps:
       - name: Checkout
@@ -20,10 +20,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          # УБИРАЕМ registry-url.
-          # Это предотвратит создание сломанного .npmrc файла.
+          registry-url: 'https://registry.npmjs.org/'
 
       - name: Publish
-        # Убрали env с токеном. OIDC сработает автоматически благодаря --provenance
-        # Если используешь Yarn Berry (v2+), лучше публиковать через yarn npm publish
-        run: npm publish --provenance --access public
+        run: npm publish --access public
