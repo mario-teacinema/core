@@ -11,6 +11,10 @@
     "name": "Pavel",
     "email": "x-chekushkin-pavel@yandex.ru"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mario-teacinema/core.git"
+  },
   "peerDependencies": {
     "prettier": "^3.0.0"
   },
