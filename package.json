@@ -1,6 +1,6 @@
 {
   "name": "@mario-teacinema/core",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Core utilities and shared setup",
   "type": "module",
   "publishConfig": {
